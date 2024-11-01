@@ -7,11 +7,11 @@ import {
 import { Box } from "@mui/material";
 import Navbar from "./components/Navbar";
 import "./App.css";
-import Home from "./routes/Home";
-import CreateRecipe from "./routes/CreateRecipe";
-import RecipesList from "./routes/RecipesList";
-import ErrorPage from "./routes/ErrorPage";
-import RecipeDetails from "./routes/RecipeDetails";
+import Home from "./pages/Home/Home";
+import CreateRecipe from "./pages/CreateRecipe/CreateRecipe";
+import RecipesList from "./pages/RecipeList/RecipesList";
+import ErrorPage from "./pages/ErrorPage/ErrorPage";
+import RecipeDetails from "./pages/RecipeDetails/RecipeDetails";
 import './i18n';
 
 import { CartProvider } from "./CartContext";
@@ -33,7 +33,7 @@ const AppLayout = () => {
         }}
       >
         <Outlet />
-    </Box >
+      </Box >
     </>
   );
 };

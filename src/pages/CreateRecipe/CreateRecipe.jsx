@@ -1,15 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Box, Button, Typography, TextField, Radio, RadioGroup, FormControlLabel, FormControl, Card, CardContent, List, ListItem, ListItemText, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { addDoc, collection } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { db, storage, auth } from "../firebase";
+import { db, storage, auth } from "../../firebase";
 import { useTranslation } from 'react-i18next';
+import CartContext from "../../CartContext";
 
 const CreateRecipe = () => {
   const { t } = useTranslation();
+  const { isAuth } = useContext(CartContext); // Access authentication state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ingredient, setIngredient] = useState("");
@@ -48,7 +50,6 @@ const CreateRecipe = () => {
       setErrors((prev) => ({ ...prev, instruction: t('createRecipe.validation.instructionRequired') }));
     }
   };
-
 
   const handleRemoveItem = (list, setList, index) => {
     const newList = list.filter((_, i) => i !== index);
@@ -93,9 +94,9 @@ const CreateRecipe = () => {
         description,
         ingredientsList,
         instructions,
-        status,
+        status: isAuth ? status : "Public", // If not logged in, force status to "Public"
         imageUrl,
-        author: { name: auth.currentUser?.displayName || "Anonymous", id: auth.currentUser?.uid || "unknown" },
+        author: isAuth ? { name: auth.currentUser?.displayName || "Anonymous", id: auth.currentUser?.uid || "unknown" } : { name: "Anonymous", id: "unknown" },
       });
       navigate("/recipes");
     } catch (error) {
@@ -223,7 +224,12 @@ const CreateRecipe = () => {
           <FormControl component="fieldset">
             <RadioGroup row value={status} onChange={(e) => setStatus(e.target.value)}>
               <FormControlLabel value="Public" control={<Radio />} label={t('createRecipe.public')} />
-              <FormControlLabel value="Private" control={<Radio />} label={t('createRecipe.private')} />
+              <FormControlLabel
+                value="Private"
+                control={<Radio />}
+                label={t('createRecipe.private')}
+                disabled={!isAuth}
+              />
             </RadioGroup>
           </FormControl>
 

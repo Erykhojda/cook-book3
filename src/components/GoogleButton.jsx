@@ -9,13 +9,15 @@ import { useTranslation } from 'react-i18next';
 const GoogleButton = () => {
     const { t } = useTranslation();
     const { setIsAuth, isAuth } = useContext(CartContext);
-    const [setCookie, removeCookie] = useCookies(['isAuth', 'accessToken']);
+    const [cookies, setCookie, removeCookie] = useCookies(['isAuth', 'accessToken']);
 
     const signUserOut = () => {
         signOut(auth).then(() => {
             removeCookie('isAuth', { path: '/' });
             removeCookie('accessToken', { path: '/' });
             setIsAuth(false);
+        }).catch((error) => {
+            console.error("Sign out error: ", error);
         });
     };
 
@@ -27,7 +29,7 @@ const GoogleButton = () => {
                 setIsAuth(true);
             })
             .catch((error) => {
-                console.error(error);
+                console.error("Sign in error: ", error);
             });
     };
 

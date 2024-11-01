@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import noImage from '../assets/no-image.jpg';
+import noImage from '../../assets/no-image.jpg';
 import { Typography, Box, Card, CardMedia, CardContent, List, ListItem, ListItemText, Divider } from '@mui/material';
 import { doc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { useTranslation } from 'react-i18next';
 
 const RecipeDetails = () => {

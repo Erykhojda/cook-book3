@@ -1,11 +1,11 @@
 import React, { useContext, useState, useEffect } from "react";
-import CartContext from "../CartContext";
-import image from '../assets/no-image.jpg';
+import CartContext from "../../CartContext";
+import image from '../../assets/no-image.jpg';
 import { useCookies } from 'react-cookie';
 import { useNavigate } from "react-router-dom";
 import { CardMedia, Backdrop, Typography, Box, CircularProgress } from '@mui/material';
 import { getDocs, collection } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db, auth } from '../../firebase';
 import { ContainerRecipes, RecipeBox, ImageContainer, DescriptionContainer, RecipeTitle, FilterButton, SeeMoreButton } from './RecipesList.styled';
 import { useTranslation } from 'react-i18next';
 
@@ -15,12 +15,13 @@ function Recipes() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [switchRecipesCategory, setSwitchRecipesCategory] = useState('Public');
   const [loading, setLoading] = useState(true);
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
   const recipesCollectionRef = collection(db, "recipes");
 
-  const { recipes, setRecipes, isAuth } = useContext(CartContext);
+  const { recipes, setRecipes } = useContext(CartContext);
   const navigate = useNavigate();
   const [cookies] = useCookies(['accessToken']);
-  const id = cookies.accessToken;
+  const userId = auth.currentUser?.uid || null;
 
   useEffect(() => {
     const getRecipes = async () => {
@@ -31,6 +32,14 @@ function Recipes() {
     };
     getRecipes();
   }, []);
+
+  useEffect(() => {
+    if (switchRecipesCategory === 'Public') {
+      setFilteredRecipes(recipes.filter(recipe => recipe.status === 'Public'));
+    } else if (switchRecipesCategory === 'Private') {
+      setFilteredRecipes(recipes.filter(recipe => recipe.status === 'Private' && recipe.author.id === userId));
+    }
+  }, [recipes, switchRecipesCategory, userId]);
 
   const handleClose = () => setOpen(false);
   const handleOpen = (item) => {
@@ -51,13 +60,13 @@ function Recipes() {
         <Box display="flex" justifyContent="center" mt={5}>
           <CircularProgress color="primary" />
         </Box>
-      ) : recipes.length === 0 ? (
+      ) : filteredRecipes.length === 0 ? (
         <Typography variant="h6" color="warning" align="center" mt={3}>
           {t('recipes.noRecipes')}
         </Typography>
       ) : (
         <Box display="flex" flexWrap="wrap" justifyContent="center" gap={3}>
-          {recipes.map((item, index) => (
+          {filteredRecipes.map((item, index) => (
             <RecipeBox key={index}>
               <ImageContainer>
                 <CardMedia
