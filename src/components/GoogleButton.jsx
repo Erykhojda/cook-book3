@@ -4,10 +4,12 @@ import { auth, provider } from '../firebase';
 import { Button } from '@mui/material';
 import { useCookies } from 'react-cookie';
 import CartContext from "../CartContext";
+import { useTranslation } from 'react-i18next';
 
 const GoogleButton = () => {
+    const { t } = useTranslation();
     const { setIsAuth, isAuth } = useContext(CartContext);
-    const [, setCookie, removeCookie] = useCookies(['isAuth', 'accessToken']);
+    const [setCookie, removeCookie] = useCookies(['isAuth', 'accessToken']);
 
     const signUserOut = () => {
         signOut(auth).then(() => {
@@ -32,9 +34,13 @@ const GoogleButton = () => {
     return (
         <>
             {!isAuth ? (
-                <Button variant="contained" onClick={signInWithGoogle}>SignIn</Button>
+                <Button variant="contained" onClick={signInWithGoogle}>
+                    {t('auth.signIn')}
+                </Button>
             ) : (
-                <Button variant="contained" onClick={signUserOut}>Logout</Button>
+                <Button variant="contained" onClick={signUserOut}>
+                    {t('auth.logout')}
+                </Button>
             )}
         </>
     );
