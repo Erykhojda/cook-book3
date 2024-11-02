@@ -11,7 +11,7 @@ import CartContext from "../../CartContext";
 
 const CreateRecipe = () => {
   const { t } = useTranslation();
-  const { isAuth } = useContext(CartContext); // Access authentication state
+  const { isAuth } = useContext(CartContext);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [ingredient, setIngredient] = useState("");
@@ -94,7 +94,7 @@ const CreateRecipe = () => {
         description,
         ingredientsList,
         instructions,
-        status: isAuth ? status : "Public", // If not logged in, force status to "Public"
+        status: isAuth ? status : "Public",
         imageUrl,
         author: isAuth ? { name: auth.currentUser?.displayName || "Anonymous", id: auth.currentUser?.uid || "unknown" } : { name: "Anonymous", id: "unknown" },
       });
